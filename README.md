@@ -37,6 +37,8 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `vllm-t4-7b-tensor-parallel-vs-awq.ipynb` | A 7B fp16 model does not fit on one T4. Is tensor parallelism on two T4s or AWQ on one T4 better for latency, throughput and accuracy? | [Results](results/vllm-t4-7b-tensor-parallel-vs-awq-2026-11-23.md) |
 | `sizing-capacity-plan.ipynb` | How many T4 GPUs do 500 users need under a latency SLA? | [Results](results/sizing-capacity-plan-2026-11-23.md) |
 | `vllm-t4-inference-optimizations.ipynb` | What do prefix caching, speculative decoding, chunked prefill and request queuing each change? | Results pending |
+| `rag-chunking-hybrid-rerank.ipynb` | On a corpus of public NVIDIA articles, how do chunk size, BM25 vs dense vs hybrid search and a reranker change retrieval and groundedness? | Results pending |
+| `lora-qlora-finetune-t4.ipynb` | When does QLoRA fine-tuning beat prompting, how do overfitting and forgetting look, and how does adapter serving compare with a merged model? | Results pending |
 
 ## How to run
 
