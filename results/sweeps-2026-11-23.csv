@@ -1,0 +1,13 @@
+experiment,config,model,gpus,precision,concurrency,requests,ttft_median_ms,ttft_p99_ms,tpot_median_ms,output_tok_s,requests_s
+vllm-t4-serving-benchmark,1.5b-fp16-1gpu,Qwen/Qwen2.5-1.5B-Instruct,1,fp16,1,16,115,979,15.7,59,0.46
+vllm-t4-serving-benchmark,1.5b-fp16-1gpu,Qwen/Qwen2.5-1.5B-Instruct,1,fp16,4,16,104,199,17.3,220,1.72
+vllm-t4-serving-benchmark,1.5b-fp16-1gpu,Qwen/Qwen2.5-1.5B-Instruct,1,fp16,16,64,754,1734,28.5,463,3.62
+vllm-t4-serving-benchmark,1.5b-fp16-1gpu,Qwen/Qwen2.5-1.5B-Instruct,1,fp16,64,256,1461,6878,96.1,650,5.08
+vllm-t4-7b-tensor-parallel-vs-awq,7b-fp16-tp2,Qwen/Qwen2.5-7B-Instruct,2,fp16,1,16,263,339,32.2,28,0.22
+vllm-t4-7b-tensor-parallel-vs-awq,7b-fp16-tp2,Qwen/Qwen2.5-7B-Instruct,2,fp16,4,16,228,310,36.2,106,0.83
+vllm-t4-7b-tensor-parallel-vs-awq,7b-fp16-tp2,Qwen/Qwen2.5-7B-Instruct,2,fp16,16,64,1509,3750,55.7,231,1.80
+vllm-t4-7b-tensor-parallel-vs-awq,7b-fp16-tp2,Qwen/Qwen2.5-7B-Instruct,2,fp16,64,256,2744,13780,170.4,371,2.90
+vllm-t4-7b-tensor-parallel-vs-awq,7b-awq-1gpu,Qwen/Qwen2.5-7B-Instruct-AWQ,1,int4-awq,1,16,423,493,25.0,35,0.28
+vllm-t4-7b-tensor-parallel-vs-awq,7b-awq-1gpu,Qwen/Qwen2.5-7B-Instruct-AWQ,1,int4-awq,4,16,285,397,27.3,136,1.06
+vllm-t4-7b-tensor-parallel-vs-awq,7b-awq-1gpu,Qwen/Qwen2.5-7B-Instruct-AWQ,1,int4-awq,16,64,3016,6719,58.9,192,1.50
+vllm-t4-7b-tensor-parallel-vs-awq,7b-awq-1gpu,Qwen/Qwen2.5-7B-Instruct-AWQ,1,int4-awq,64,256,5043,27121,264.1,241,1.88
