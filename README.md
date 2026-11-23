@@ -35,7 +35,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 |---|---|---|
 | `vllm-t4-serving-benchmark.ipynb` | How do TTFT, TPOT and throughput change with concurrency, and does the vLLM KV cache match the sizing math? | [Results](results/vllm-t4-serving-benchmark-2026-11-23.md) |
 | `vllm-t4-7b-tensor-parallel-vs-awq.ipynb` | A 7B fp16 model does not fit on one T4. Is tensor parallelism on two T4s or AWQ on one T4 better for latency, throughput and accuracy? | [Results](results/vllm-t4-7b-tensor-parallel-vs-awq-2026-11-23.md) |
-| `sizing-capacity-plan.ipynb` | How many T4 GPUs do 500 users need under a latency SLA? | Results pending |
+| `sizing-capacity-plan.ipynb` | How many T4 GPUs do 500 users need under a latency SLA? | [Results](results/sizing-capacity-plan-2026-11-23.md) |
 | `vllm-t4-inference-optimizations.ipynb` | What do prefix caching, speculative decoding, chunked prefill and request queuing each change? | Results pending |
 
 ## How to run
