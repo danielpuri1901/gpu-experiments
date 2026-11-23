@@ -11,6 +11,8 @@ Each experiment follows one method: predict the result with simple math, measure
 - Batching is cheap. From 1 to 4 concurrent requests, throughput grew 3.7 times and TPOT grew only 10%.
 - The 7B model in 4-bit AWQ on one T4 had a lower TPOT than 7B fp16 on two T4s: 25.0 ms against 32.2 ms at concurrency 1. Two T4s gave more throughput at concurrency 64: 371 tokens/s against 241. (AWQ: 4-bit weight quantization. Tensor parallelism, or TP: one model split over several GPUs.)
 - GSM8K scored 91 of 100 for fp16 and 90 of 100 for AWQ. The standard error is about 3 points, so this run shows no quality difference.
+- Prefix caching cut the median TTFT 10 times on prompts that share a 2,000-token prefix. N-gram speculative decoding made a copy task 4 times faster at concurrency 1 and 2.1 times faster at concurrency 16.
+- Under a 2 s TTFT p99 SLA, 500 users need 3 T4s on the 1.5B model, 8 on 7B AWQ and 14 on 7B with tensor parallelism. The latency target, not raw throughput, sets the count.
 
 ## Charts
 
@@ -36,7 +38,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `vllm-t4-serving-benchmark.ipynb` | How do TTFT, TPOT and throughput change with concurrency, and does the vLLM KV cache match the sizing math? | [Results](results/vllm-t4-serving-benchmark-2026-11-23.md) |
 | `vllm-t4-7b-tensor-parallel-vs-awq.ipynb` | A 7B fp16 model does not fit on one T4. Is tensor parallelism on two T4s or AWQ on one T4 better for latency, throughput and accuracy? | [Results](results/vllm-t4-7b-tensor-parallel-vs-awq-2026-11-23.md) |
 | `sizing-capacity-plan.ipynb` | How many T4 GPUs do 500 users need under a latency SLA? | [Results](results/sizing-capacity-plan-2026-11-23.md) |
-| `vllm-t4-inference-optimizations.ipynb` | What do prefix caching, speculative decoding, chunked prefill and request queuing each change? | Results pending |
+| `vllm-t4-inference-optimizations.ipynb` | What do prefix caching, speculative decoding, chunked prefill and request queuing each change? | [Results](results/vllm-t4-inference-optimizations-2026-11-23.md) |
 | `rag-chunking-hybrid-rerank.ipynb` | On a corpus of public NVIDIA articles, how do chunk size, BM25 vs dense vs hybrid search and a reranker change retrieval and groundedness? | Results pending |
 | `lora-qlora-finetune-t4.ipynb` | When does QLoRA fine-tuning beat prompting, how do overfitting and forgetting look, and how does adapter serving compare with a merged model? | Results pending |
 
