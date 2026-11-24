@@ -18,6 +18,8 @@ Each experiment follows one method: predict the result with simple math, measure
 - In vLLM, the LoRA adapter and the merged model scored the same (0.87 on 100 items). The adapter request took 169 ms, the merged model 53 ms and the plain base 55 ms. The adapter is 34 MiB per task and the merged model is 953 MiB.
 - RAPIDS cuDF ran six pandas steps on 10 million rows 13.9 times faster than the CPU, with no code change. At 100 thousand rows three of the six steps were slower on the GPU.
 - A data flywheel with 250 human labels per turn raised the app-specific score from 0.60 to 0.82 in three turns. When the model labelled its own failures, the score fell to 0.29.
+- A 7B ReAct agent with tools passed 54% of 24 support tasks. One call with all data in the prompt passed 79%. The agent failed all 4 tasks that it must refuse.
+- Against 12 prompt-injection attacks, only a code check before the tool runs stopped all of them. Prompt hardening stopped none of the 5 that worked.
 
 ## Charts
 
@@ -47,6 +49,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `rag-chunking-hybrid-rerank.ipynb` | On a corpus of public NVIDIA articles, how do chunk size, BM25 vs dense vs hybrid search and a reranker change retrieval and groundedness? | [Results](results/rag-chunking-hybrid-rerank-2026-11-23.md) |
 | `lora-qlora-finetune-t4.ipynb` | When does QLoRA fine-tuning beat prompting, how do overfitting and forgetting look, and how does adapter serving compare with a merged model? | [Results](results/lora-qlora-finetune-t4-2026-11-24.md) |
 | `data-flywheel-cudf.ipynb` | How much does cuDF speed up data preparation, what does bad data cost, and does a data flywheel improve the application? | [Results](results/data-flywheel-cudf-2026-11-24.md) |
+| `agent-react-guardrails.ipynb` | What does a multi-step agent buy over one LLM call, what does it cost, and which guardrail stops a prompt injection? | [Results](results/agent-react-guardrails-2026-11-24.md) |
 
 ## How to run
 
