@@ -25,6 +25,7 @@ Each experiment follows one method: predict the result with simple math, measure
 - NVIDIA Warp on a T4 ran 16,384 simulated machines 256 times faster than NumPy on the CPU. With one machine the same Warp kernel was 12 times faster on the CPU.
 - On hosted Nemotron models, reasoning took arithmetic from 0.1 to 1.0 on a 30B MoE model and gave nothing on extraction and routing, at 9 to 105 times the tokens. A router kept the accuracy of the largest model with 94% less compute proxy (15 tasks).
 - With the same model and GPU, vLLM gave 858 tokens/s at 16 requests against 31 for a simple one-request server. The client moved to a hosted NIM with no code change.
+- Two hosted vision models could not tell possible motion from impossible motion better than a guess (24 clips). The same clips, question and seed at temperature 0 moved three of four scores by 7 to 18 points between two runs, and the critic picked from those scores went from useful to useless.
 
 ## Charts
 
