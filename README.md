@@ -21,6 +21,8 @@ Each experiment follows one method: predict the result with simple math, measure
 - A 7B ReAct agent with tools passed 54% of 24 support tasks. One call with all data in the prompt passed 79%. The agent failed all 4 tasks that it must refuse.
 - Against 12 prompt-injection attacks, only a code check before the tool runs stopped all of them. Prompt hardening stopped none of the 5 that worked.
 - On Kubernetes, a readiness probe kept 800 requests free of errors while new pods loaded a model. Without it, 134 of 800 failed. Mesh outlier detection cut failures from a poisoned pod from 145 to 3 of 300.
+- A cart-pole controller trained on one set of physics scored 1.00 in simulation and 0.14 on a hidden machine. Wide domain randomization scored 0.82 with no real data. An extra action delay of 50 ms cut success from 0.94 to 0.13, so control must run at the edge.
+- NVIDIA Warp on a T4 ran 16,384 simulated machines 256 times faster than NumPy on the CPU. With one machine the same Warp kernel was 12 times faster on the CPU.
 
 ## Charts
 
@@ -52,6 +54,10 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `data-flywheel-cudf.ipynb` | How much does cuDF speed up data preparation, what does bad data cost, and does a data flywheel improve the application? | [Results](results/data-flywheel-cudf-2026-11-24.md) |
 | `agent-react-guardrails.ipynb` | What does a multi-step agent buy over one LLM call, what does it cost, and which guardrail stops a prompt injection? | [Results](results/agent-react-guardrails-2026-11-24.md) |
 | [`k8s-model-service/`](k8s-model-service/README.md) (GitHub Actions, no GPU) | How does Kubernetes keep a model service available while it crashes, updates and grows, and what does a service mesh add? | [Results](results/k8s-model-service-2026-11-24.md) |
+| `sim-to-real-domain-randomization.ipynb` | How much do domain randomization and a sim-to-real flywheel close the gap, and why must the controller run at the edge? | [Results](results/sim-to-real-domain-randomization-2026-11-24.md) |
+| `nim-model-selection.ipynb` | Which hosted Nemotron model should serve which workload, and when is reasoning worth its tokens? | Not run yet |
+| `nim-three-backends.ipynb` | Can one client move between self-hosted and cloud, and how does private data stay off the cloud? | Not run yet |
+| `cosmos-physical-check.ipynb` | Can a physical-AI model tell possible motion from impossible motion? | Not run yet |
 
 ## How to run
 
