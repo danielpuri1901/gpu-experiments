@@ -47,13 +47,16 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 ## How to run
 
 1. Open a notebook in Kaggle: File, Import Notebook.
-2. Open Settings, then Accelerator, and choose GPU T4 x2.
+2. Open Settings, then Accelerator, and choose GPU T4 x2. `sizing-capacity-plan.ipynb` needs no GPU.
 3. Turn Internet on.
 4. Choose Run All.
 
 Kaggle gives about 30 GPU hours each week for free.
 
 ## Setup
+
+This table is for the two serving benchmarks.
+The results file of each other experiment gives its own setup.
 
 | Item | Value |
 |---|---|
@@ -66,8 +69,8 @@ Kaggle gives about 30 GPU hours each week for free.
 ## Limits
 
 Each number comes from one run with one seed.
-The samples are small: 16 to 256 requests per point, and 100 GSM8K questions.
-Prompts are random, so prefix caching does nothing here.
+The samples are small: 16 to 256 requests per point and 100 GSM8K questions in the serving benchmarks, 101 synthetic questions in RAG, and 300 test items in QLoRA.
+The two serving benchmarks use random prompts, so prefix caching does nothing there.
 The load generator runs on the same machine, so there is no network latency.
 The two-replica AWQ throughput in the results file is an estimate and not a measurement.
 
