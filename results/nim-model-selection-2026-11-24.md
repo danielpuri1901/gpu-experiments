@@ -17,7 +17,7 @@ The compute proxy is completion tokens times active parameters in billions. It i
 | `nemotron-3-ultra-550b-a55b` | 550B, 55B active | a switch was found and used |
 | `google/gemma-3-4b-it` | 4B | not tested: every request gave HTTP 404, although the model is in the list |
 
-The `/no_think` system prompt shortened the thinking of two models but did not switch it off.
+The `/no_think` system prompt shortened the thinking of lightning-30b and super-vl-120b but did not switch it off.
 
 ## Results (accuracy of 10 tasks, median seconds)
 
@@ -69,7 +69,7 @@ It chose lightning-30b for all three: reasoning on for arithmetic, off for extra
 - **Reasoning pays only where the task needs steps.** It took arithmetic from 0.1 to 1.0 on the small MoE model. On extraction and routing it gave nothing and cost 9 to 105 times the tokens.
 - **A small model with reasoning beat a huge model without it.** lightning-30b with reasoning scored 1.0 on arithmetic. ultra-550b without reasoning scored 0.7.
 - **A router kept the accuracy and cut the compute proxy by 94% and the latency by 81%.** The gain comes from the workload, so measure your own.
-- **Active parameters set the compute per token.** 30B total with 3B active has a lower proxy than a dense 4B model.
+- **Active parameters set the compute per token.** lightning-30b (3B active, reasoning off) had a lower proxy on extraction than bolt-e4b, which is treated as 4B.
 - **A model in the list may not be callable.** Check with a real request.
 - **Numbers and JSON cost more tokens than prose.** Long digits took 10.75 tokens for each number.
 
