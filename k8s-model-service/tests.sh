@@ -17,7 +17,6 @@ want_n() { kubectl -n "$1" get deploy model -o jsonpath='{.spec.replicas}'; }
 poll() { local f=$1 v; shift; while :; do v=$("$@" 2>/dev/null); echo "$(now) ${v:-0}" >>"$f"; sleep 1; done; }
 rollout() { kubectl -n "$1" rollout status deploy/"${2:-model}" --timeout="${3:-180s}" >/dev/null; }
 reset() { kubectl -n "$1" apply -k base >/dev/null && rollout "$1"; }   # back to the manifest state
-reset_fixed() { reset "$1"; kubectl -n "$1" delete hpa model >/dev/null; }  # no HPA, so the replica count stays what the test sets
 
 verdict() {  # NAME AWK-CONDITION MEASURED
   local r=FAIL
@@ -58,7 +57,7 @@ load_end() {  # NS NAME : wait for the Job, keep its JSON in $OUT/NAME.json
 
 t1() {
   echo "== 1 readiness gate"
-  reset_fixed plain
+  reset plain
   kubectl -n plain set env deploy/model LOAD_SECONDS=15 >/dev/null; rollout plain
   local v S n f p
   for v in probe noprobe; do
@@ -81,7 +80,7 @@ t1() {
 
 t2() {
   echo "== 2 self-healing"
-  reset_fixed plain
+  reset plain
   local T0 T1 victim rec restart=-1 c S n f
   load_start plain t2 --seconds 80 --workers 4 --rps 20
   poll "$OUT/t2-ready.trace" ready_n plain & local P=$!
@@ -107,7 +106,7 @@ t2() {
 
 t3() {
   echo "== 3 rolling update and bad release"
-  reset_fixed plain
+  reset plain
   local S n f v1 v2 v3 ready stalled=yes undone=no
   load_start plain t3a --seconds 75 --workers 4 --rps 20
   sleep 5; kubectl -n plain set env deploy/model VERSION=v2 >/dev/null; rollout plain
@@ -128,9 +127,10 @@ t3() {
 
 t4() {
   echo "== 4 autoscaling"
-  reset plain   # re-creates the HPA
-  local T0 T1 up down max S B A i
+  reset plain; sleep 60   # let the CPU load of test 3 leave the metrics, or the HPA scales out before our load starts
+  local T0 T1 up down max idle S B A i
   for i in $(seq 60); do kubectl -n plain top pod -l app=model >/dev/null 2>&1 && break; sleep 3; done
+  kubectl -n plain apply -f hpa.yaml >/dev/null; sleep 30; idle=$(want_n plain)   # two HPA syncs with no load
   poll "$OUT/t4-want.trace" want_n plain & local P=$!
   load_start plain t4 --seconds 150 --workers 12
   T0=$(now); load_end plain t4; T1=$(now)
@@ -138,8 +138,8 @@ t4() {
   B=$(stats "$OUT/t4.json" "$T0" "$(awk "BEGIN{printf \"%.3f\", $T0+$up}")")
   A=$(stats "$OUT/t4.json" "$(awk "BEGIN{printf \"%.3f\", $T0+$up+45}")" "$T1")
   max=$(awk '$2>m{m=$2} END{print m+0}' "$OUT/t4-want.trace")
-  verdict "4a HPA scales out under CPU load" "$up>=0 && $up<=150 && $max>3 && $max<=6" \
-    "first scale-out after ${up}s, max replicas=$max, p50 latency before=$(j "$B" .p50_ms) ms after=$(j "$A" .p50_ms) ms, p95 before=$(j "$B" .p95_ms) ms after=$(j "$A" .p95_ms) ms, failed=$(j "$B" .failed)+$(j "$A" .failed)"
+  verdict "4a HPA scales out under CPU load" "$idle==3 && $up>=0 && $up<=150 && $max>3 && $max<=6" \
+    "replicas when idle=$idle, first scale-out after ${up}s, max replicas=$max, p50 latency before=$(j "$B" .p50_ms) ms after=$(j "$A" .p50_ms) ms, p95 before=$(j "$B" .p95_ms) ms after=$(j "$A" .p95_ms) ms, failed=$(j "$B" .failed)+$(j "$A" .failed)"
   for i in $(seq 150); do [ "$($L until "$OUT/t4-want.trace" "$T1" le 3)" != -1 ] && break; sleep 2; done
   down=$($L until "$OUT/t4-want.trace" "$T1" le 3); kill $P; wait $P 2>/dev/null
   verdict "4b scale-in waits for the 60 s stabilisation window" "$down>=30 && $down<=240" "back to 3 replicas ${down}s after the load stopped"
@@ -153,7 +153,7 @@ weights() {  # STABLE CANARY : shift the mesh weights
 mesh_up() {
   kubectl delete ns plain --wait=false >/dev/null   # free CPU for the sidecars
   kubectl create ns mesh >/dev/null; kubectl label ns mesh istio-injection=enabled >/dev/null
-  reset_fixed mesh
+  reset mesh
   kubectl -n mesh get deploy model -o json | jq '{apiVersion, kind, metadata: {name: "model-canary"}, spec}
     | .spec.replicas = 2 | .spec.selector.matchLabels.track = "canary" | .spec.template.metadata.labels.track = "canary"
     | (.spec.template.spec.containers[0].env[] | select(.name == "VERSION")).value = "v2"' | kubectl -n mesh apply -f - >/dev/null

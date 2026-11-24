@@ -34,7 +34,8 @@ On a failure the job also dumps events, pod descriptions and pod logs.
 
 ## Files
 
-- `base/app.yaml`: Deployment, Service, PodDisruptionBudget and HorizontalPodAutoscaler.
+- `base/app.yaml`: Deployment, Service and PodDisruptionBudget.
+- `hpa.yaml`: HorizontalPodAutoscaler. Only test 4 applies it.
 - `base/server.py`: the model server. `base/loadgen.py`: the load generator and the result analysis.
 - `mesh/`: the Istio VirtualService, DestinationRules and the STRICT policy.
 - `kind.yaml`: the cluster. `tests.sh`: the six tests.

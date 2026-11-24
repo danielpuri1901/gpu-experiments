@@ -1,0 +1,13 @@
+# Not part of base: test 4 applies it. An HPA in base scales out at once on the CPU load of the test before.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: model}
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: model}
+  minReplicas: 3
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource: {name: cpu, target: {type: Utilization, averageUtilization: 50}}
+  behavior:
+    scaleDown: {stabilizationWindowSeconds: 60}  # default is 300; shorter for CI

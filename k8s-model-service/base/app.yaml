@@ -55,16 +55,3 @@ metadata: {name: model}
 spec:
   minAvailable: 2
   selector: {matchLabels: {app: model}}
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata: {name: model}
-spec:
-  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: model}
-  minReplicas: 3
-  maxReplicas: 6
-  metrics:
-    - type: Resource
-      resource: {name: cpu, target: {type: Utilization, averageUtilization: 50}}
-  behavior:
-    scaleDown: {stabilizationWindowSeconds: 60}  # default is 300; shorter for CI
