@@ -20,6 +20,7 @@ Each experiment follows one method: predict the result with simple math, measure
 - A data flywheel with 250 human labels per turn raised the app-specific score from 0.60 to 0.82 in three turns. When the model labelled its own failures, the score fell to 0.29.
 - A 7B ReAct agent with tools passed 54% of 24 support tasks. One call with all data in the prompt passed 79%. The agent failed all 4 tasks that it must refuse.
 - Against 12 prompt-injection attacks, only a code check before the tool runs stopped all of them. Prompt hardening stopped none of the 5 that worked.
+- On Kubernetes, a readiness probe kept 800 requests free of errors while new pods loaded a model. Without it, 134 of 800 failed. Mesh outlier detection cut failures from a poisoned pod from 145 to 3 of 300.
 
 ## Charts
 
@@ -50,6 +51,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `lora-qlora-finetune-t4.ipynb` | When does QLoRA fine-tuning beat prompting, how do overfitting and forgetting look, and how does adapter serving compare with a merged model? | [Results](results/lora-qlora-finetune-t4-2026-11-24.md) |
 | `data-flywheel-cudf.ipynb` | How much does cuDF speed up data preparation, what does bad data cost, and does a data flywheel improve the application? | [Results](results/data-flywheel-cudf-2026-11-24.md) |
 | `agent-react-guardrails.ipynb` | What does a multi-step agent buy over one LLM call, what does it cost, and which guardrail stops a prompt injection? | [Results](results/agent-react-guardrails-2026-11-24.md) |
+| [`k8s-model-service/`](k8s-model-service/README.md) (GitHub Actions, no GPU) | How does Kubernetes keep a model service available while it crashes, updates and grows, and what does a service mesh add? | [Results](results/k8s-model-service-2026-11-24.md) |
 
 ## How to run
 
