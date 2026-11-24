@@ -1,0 +1,15 @@
+# Same DestinationRule name, so apply replaces mesh.yaml's rule and adds the circuit breaker.
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata: {name: model}
+spec:
+  host: model
+  subsets:
+    - {name: stable, labels: {track: stable}}
+    - {name: canary, labels: {track: canary}}
+  trafficPolicy:
+    outlierDetection:   # eject a pod after 3 straight 5xx
+      consecutive5xxErrors: 3
+      interval: 1s
+      baseEjectionTime: 60s
+      maxEjectionPercent: 50

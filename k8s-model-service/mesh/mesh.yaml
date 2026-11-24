@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata: {name: model}
+spec:
+  host: model
+  subsets:
+    - {name: stable, labels: {track: stable}}
+    - {name: canary, labels: {track: canary}}
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata: {name: model}
+spec:
+  hosts: [model]
+  http:
+    - route:
+        - {destination: {host: model, subset: stable}, weight: 90}
+        - {destination: {host: model, subset: canary}, weight: 10}

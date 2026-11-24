@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: model}
+spec:
+  replicas: 3
+  selector: {matchLabels: {app: model, track: stable}}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}  # never drop below 3 ready pods
+  template:
+    metadata: {labels: {app: model, track: stable}}
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: server
+          image: python:3.14.10-slim-trixie@sha256:d712121441a48a45f8452726ccc9fcf7094d8da24ccc2a588bea02fe18d3fb91
+          command: [python, -u, /app/server.py]
+          ports: [{name: http, containerPort: 8080}]
+          env:
+            - {name: VERSION, value: v1}
+            - {name: LOAD_SECONDS, value: "5"}
+            - name: POD_NAME
+              valueFrom: {fieldRef: {fieldPath: metadata.name}}
+          resources:
+            requests: {cpu: 100m, memory: 64Mi}
+            limits: {cpu: 500m, memory: 128Mi}
+          startupProbe:    # gives the slow model load time before liveness starts
+            httpGet: {path: /health, port: http}
+            periodSeconds: 1
+            failureThreshold: 30
+          readinessProbe:  # gates traffic: false while the model loads
+            httpGet: {path: /ready, port: http}
+            periodSeconds: 1
+          livenessProbe:   # restarts a pod whose /health fails 3 times in a row
+            httpGet: {path: /health, port: http}
+            periodSeconds: 3
+            failureThreshold: 3
+          lifecycle:
+            preStop: {exec: {command: [sleep, "5"]}}  # let endpoints update before SIGTERM
+          volumeMounts: [{name: code, mountPath: /app}]
+      volumes:
+        - name: code
+          configMap: {name: code}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: model}
+spec:
+  selector: {app: model}
+  ports: [{name: http, port: 80, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: model}
+spec:
+  minAvailable: 2
+  selector: {matchLabels: {app: model}}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: model}
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: model}
+  minReplicas: 3
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource: {name: cpu, target: {type: Utilization, averageUtilization: 50}}
+  behavior:
+    scaleDown: {stabilizationWindowSeconds: 60}  # default is 300; shorter for CI
