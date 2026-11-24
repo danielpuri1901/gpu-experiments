@@ -2,7 +2,10 @@
 
 One run of `lora-qlora-finetune-t4.ipynb` in the Kaggle notebook of the same name.
 Training, evaluation and the forgetting probe finished.
-The adapter serving step did not: the vLLM LoRA server cell made no progress, and Kaggle ended the idle session about 40 minutes later.
+The adapter serving step did not.
+The laptop went to sleep about 90 seconds after the vLLM server cell started, and Kaggle later ended the idle session.
+No evidence shows that the server itself stalled.
+An earlier version of this file said that it did.
 So this file has no serving numbers yet.
 
 Two fixes went in during the run:
@@ -52,4 +55,5 @@ Forgetting probe, 50 GSM8K test questions, greedy, same 4-bit base:
 ## Still to run
 
 Adapter serving in vLLM (`--enable-lora --lora-modules news=<dir> --max-lora-rank 16`) against the merged fp16 model, on 100 test items.
-The next attempt should send 5 requests first with a short timeout and print the server log, so a stall shows up in minutes.
+The next run is server-side (Save Version, Save and Run All), so a sleeping laptop cannot stop it.
+The notebook now sends 5 smoke requests first, and the health check has a timeout (commit `0ca561d`).
