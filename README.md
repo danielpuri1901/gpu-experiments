@@ -16,6 +16,8 @@ Each experiment follows one method: predict the result with simple math, measure
 - In RAG over 87 NVIDIA articles, a cross-encoder reranker lifted recall@1 from 0.62 to 0.81 for 130 ms per query. BM25 beat dense retrieval, but the synthetic questions reuse passage words, which favours keyword search.
 - QLoRA on Qwen2.5-0.5B took 5.8 minutes on one T4 and lifted news-label accuracy from 0.62 (4-shot prompt) to 0.89, with every reply valid JSON. A 50-question GSM8K probe showed no forgetting.
 - In vLLM, the LoRA adapter and the merged model scored the same (0.87 on 100 items). The adapter request took 169 ms, the merged model 53 ms and the plain base 55 ms. The adapter is 34 MiB per task and the merged model is 953 MiB.
+- RAPIDS cuDF ran six pandas steps on 10 million rows 13.9 times faster than the CPU, with no code change. At 100 thousand rows three of the six steps were slower on the GPU.
+- A data flywheel with 250 human labels per turn raised the app-specific score from 0.60 to 0.82 in three turns. When the model labelled its own failures, the score fell to 0.29.
 
 ## Charts
 
@@ -44,6 +46,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `vllm-t4-inference-optimizations.ipynb` | What do prefix caching, speculative decoding, chunked prefill and request queuing each change? | [Results](results/vllm-t4-inference-optimizations-2026-11-23.md) |
 | `rag-chunking-hybrid-rerank.ipynb` | On a corpus of public NVIDIA articles, how do chunk size, BM25 vs dense vs hybrid search and a reranker change retrieval and groundedness? | [Results](results/rag-chunking-hybrid-rerank-2026-11-23.md) |
 | `lora-qlora-finetune-t4.ipynb` | When does QLoRA fine-tuning beat prompting, how do overfitting and forgetting look, and how does adapter serving compare with a merged model? | [Results](results/lora-qlora-finetune-t4-2026-11-24.md) |
+| `data-flywheel-cudf.ipynb` | How much does cuDF speed up data preparation, what does bad data cost, and does a data flywheel improve the application? | [Results](results/data-flywheel-cudf-2026-11-24.md) |
 
 ## How to run
 
