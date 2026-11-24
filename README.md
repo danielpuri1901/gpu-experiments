@@ -59,7 +59,8 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `sim-to-real-domain-randomization.ipynb` | How much do domain randomization and a sim-to-real flywheel close the gap, and why must the controller run at the edge? | [Results](results/sim-to-real-domain-randomization-2026-11-24.md) |
 | `nim-model-selection.ipynb` | Which hosted Nemotron model should serve which workload, and when is reasoning worth its tokens? | [Results](results/nim-model-selection-2026-11-24.md) |
 | `nim-three-backends.ipynb` | Can one client move between self-hosted and cloud, and how does private data stay off the cloud? | [Results](results/nim-three-backends-2026-11-24.md) |
-| `cosmos-physical-check.ipynb` | Can a physical-AI model tell possible motion from impossible motion? | Not run yet |
+| `cosmos-physical-check.ipynb` | Can hosted vision models tell possible motion from impossible motion? | [Results](results/cosmos-physical-check-2026-11-24.md) |
+| `cosmos-reason2-vs-base-t4.ipynb` | Does physical-AI post-training make Cosmos-Reason2-2B better than its own base model at spotting impossible motion? | Running |
 
 ## How to run
 
