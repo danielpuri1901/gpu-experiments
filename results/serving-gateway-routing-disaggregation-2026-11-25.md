@@ -28,7 +28,7 @@ The client was not the bottleneck: its TTFT was 6.4 ms above the server's own.
 | Prefix-aware | 176 ms | 1,395 ms | 0.897 [0.896, 0.898] |
 
 On turns 2 to 4 (72 pairs), prefix-aware was 545 ms faster than round robin [363, 744], and least outstanding was 441 ms faster [217, 667].
-Prefix-aware was not clearly better than least outstanding on TTFT. It did not overload one replica: each got 50% of the requests.
+Prefix-aware was not clearly better than least outstanding on TTFT: 176 against 181 ms overall, and 167 against 146 ms on turns 2 to 4. It did not overload one replica: each got 50% of the requests.
 
 ## Failover
 
@@ -71,7 +71,7 @@ Chats finished comes from the number of gaps (about 157 per chat), because the n
 | Cached weights, page cache dropped | 58 s | | 7 s |
 | Cached weights, warm page cache | 57 s | | 6 s |
 
-- 51 s of the 58 s is process start and imports, so a warm page cache saves 1 s.
+- About 51 s of the 58 s is process start, imports and the API server, so a warm page cache saves only 1 s.
 - With one request per second, 133, 58 and 57 requests were lost before the first answer. A readiness probe that says ready too early lets this traffic in. The first answer comes at the same time.
 - A shared weight cache saves about 75 s per pod, and 16 pods download 2.9 GiB once and not 46.2 GiB (arithmetic, not measured).
 - KV cache: 2 x layers x KV heads x head size x 2 bytes = 28,672 bytes per token. The vLLM log gave 29,433, a 3% gap.
@@ -94,7 +94,7 @@ Chats finished comes from the number of gaps (about 157 per chat), because the n
 | Autoscale, 58 s cold start | 0% | 28.5 s | 42.4% [40.6, 44.3] | 1,977 |
 | Autoscale, warm pool of 2 | 0% | 3.1 s | 0.0% [0.0, 0.1] | 2,183 |
 
-A shorter cold start is worth more than a later scale-up. A warm pool costs 2.7 times the replica-seconds of 2 fixed replicas and removes every violation.
+Autoscaling alone misses the SLO, because a cold start lasts longer than the spike allows. A warm pool of 2 removes every violation. It costs 10% more replica-seconds than plain autoscaling and 2.7 times the 2 fixed replicas.
 
 ## Triton batchers (model in Python)
 

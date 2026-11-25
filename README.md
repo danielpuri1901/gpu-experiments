@@ -27,6 +27,15 @@ Each experiment follows one method: predict the result with simple math, measure
 - With the same model and GPU, vLLM gave 858 tokens/s at 16 requests against 31 for a simple one-request server. The client moved to a hosted NIM with no code change.
 - Two hosted vision models could not tell possible motion from impossible motion better than a guess (24 clips). The same clips, question and seed at temperature 0 moved three of four scores by 7 to 18 points between two runs, and the critic picked from those scores went from useful to useless.
 - Cosmos-Reason2-2B was not measurably better than its base model Qwen3-VL-2B at spotting impossible motion (120 clips, exact McNemar p between 0.47 and 1.0 on clips both answered). Post-training changed the behavior: with thinking, Cosmos called 34 of 77 clips impossible (19 right, 15 wrong) and the base called 0 of 98. Cosmos changed its verdict on 57% of the clips when only the wording changed.
+- A PSI or KS alarm on the inputs fired 1 to 5 days after a covariate drift and almost never after a concept drift, where only the delayed labels showed the loss. A canary caught a feature-order bug that the offline test and the shadow test both passed.
+- A naive feature join gave AUC 0.814 in validation and 0.577 at serving. The point-in-time join gave 0.673 and 0.607. (Point-in-time: each row uses only the values that existed at its time.)
+- Kafka with a crash gave 50 duplicates (at-least-once) or 50 lost rows (at-most-once). An upsert sink made the result exact. A watermark must be as long as the late data: 1,800 s gave every window right and 900 s gave 11%.
+- One agent was best or equal to three multi-agent designs, with the fewest tokens. A supervisor with parallel workers scored 0% on tasks where each step needs the one before. A memory store with no user scope gave another user's value in 80% of the questions.
+- A 4B model with reasoning off beat a 30B model on office tasks (0.79 against 0.66). Forcing a JSON schema cut it to 0.57. An automatic prompt optimizer fitted its small dev set and gave nothing on held-out items.
+- Ten looks at an A/B test with no real difference gave 20% false positives, not 5%. Chain of thought won offline by 0.09, but latency (4.5 times) and tokens (4.9 times) failed the guardrails.
+- On two replicas, prefix-aware routing cut the TTFT p95 from 2.6 s to 1.4 s against round robin. Retries removed all 44 of 120 errors when a replica died, and a health check cut the wasted first tries from 72 to 3.
+- One long prompt blocks every chat on the same GPU: the ITL p99 went from 33 ms to 4.9 s. Real prefill and decode disaggregation over NIXL on two T4s brought it back to 35 ms, but only 32 chats finished against 80, because the wait moved to the first token. (ITL: the gap between two tokens.)
+- A pod with cached weights answered after 58 s and a pod that downloads them after 133 s. In a simulated spike, 2 warm standby pods took SLO violations from 56% to 0% for 10% more replica time.
 
 ## Charts
 
@@ -63,13 +72,19 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `nim-three-backends.ipynb` | Can one client move between self-hosted and cloud, and how does private data stay off the cloud? | [Results](results/nim-three-backends-2026-11-24.md) |
 | `cosmos-physical-check.ipynb` | Can hosted vision models tell possible motion from impossible motion? | [Results](results/cosmos-physical-check-2026-11-24.md) |
 | `cosmos-reason2-vs-base-t4.ipynb` | Does physical-AI post-training make Cosmos-Reason2-2B better than its own base model at spotting impossible motion? | [Results](results/cosmos-reason2-vs-base-t4-2026-11-24.md) |
+| `ops-observability-drift-lifecycle.ipynb` | Which monitor sees which drift, when should a model retrain, and what does a canary catch that a shadow test misses? | [Results](results/ops-observability-drift-lifecycle-2026-11-25.md) |
+| `data-pipeline-batch-streaming-features.ipynb` | What do a GPU data pipeline, a feature store and a stream processor each change, and what does late data do? | [Results](results/data-pipeline-batch-streaming-features-2026-11-25.md) |
+| `agents-memory-multi-agent.ipynb` | How do memory, retrieval, MCP, multi-agent routing and evaluation change an agent, and where do they fail? | [Results](results/agents-memory-multi-agent-2026-11-25.md) |
+| `prompting-ab-test-productivity.ipynb` | Does an automatic prompt optimizer beat a hand-written prompt, and how many samples does an A/B test need? | [Results](results/prompting-ab-test-productivity-2026-11-25.md) |
+| `serving-gateway-routing-disaggregation.ipynb` | How do batching, routing, failover, disaggregated prefill and decode, cold starts and autoscaling change a vLLM service? | [Results](results/serving-gateway-routing-disaggregation-2026-11-25.md) |
 
 ## How to run
 
 1. Open a notebook in Kaggle: File, Import Notebook.
-2. Open Settings, then Accelerator, and choose GPU T4 x2. `sizing-capacity-plan.ipynb` needs no GPU.
+2. Open Settings, then Accelerator, and choose GPU T4 x2. These notebooks need no GPU: `sizing-capacity-plan`, `ops-observability-drift-lifecycle`, `data-pipeline-batch-streaming-features`, `agents-memory-multi-agent` and `prompting-ab-test-productivity`.
 3. Turn Internet on.
 4. Choose Run All.
+5. Some notebooks call hosted NVIDIA models. Add `NVIDIA_API_KEY` as a Kaggle secret. The shared Kaggle address is throttled after about 1,000 calls, so run the call-heavy notebooks on a laptop.
 
 Kaggle gives about 30 GPU hours each week for free.
 
