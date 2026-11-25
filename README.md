@@ -36,6 +36,9 @@ Each experiment follows one method: predict the result with simple math, measure
 - On two replicas, prefix-aware routing cut the TTFT p95 from 2.6 s to 1.4 s against round robin. Retries removed all 44 of 120 errors when a replica died, and a health check cut the wasted first tries from 72 to 3.
 - One long prompt blocks every chat on the same GPU: the ITL p99 went from 33 ms to 4.9 s. Real prefill and decode disaggregation over NIXL on two T4s brought it back to 35 ms, but only 32 chats finished against 80, because the wait moved to the first token. (ITL: the gap between two tokens.)
 - A pod with cached weights answered after 58 s and a pod that downloads them after 133 s. In a simulated spike, 2 warm standby pods took SLO violations from 56% to 0% for 10% more replica time.
+- SFT on 1,500 code-made items took a 0.5B base model from 0.01 to 1.00 on its own instruction rules. DPO on pairs where the right reply is always the shorter one then lowered it to 0.90, and a reward model trained on the same pairs scored 0.00 on right-but-long against wrong-but-short. With balanced pairs it scored 0.83.
+- GRPO took arithmetic from 0.00 to 1.00 in 15 minutes, partly by teaching the base model to write the answer line and to stop. A student distilled from a 1.5B teacher stayed at the teacher's level (0.56 to 0.61 against 0.55) and lost all of its GSM8K ability.
+- An untrained end token made a whole set of fine-tunes look broken. LoRA does not train embeddings, so a base model whose end token was never trained cannot learn to stop on it.
 
 ## Charts
 
@@ -77,6 +80,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `agents-memory-multi-agent.ipynb` | How do memory, retrieval, MCP, multi-agent routing and evaluation change an agent, and where do they fail? | [Results](results/agents-memory-multi-agent-2026-11-25.md) |
 | `prompting-ab-test-productivity.ipynb` | Does an automatic prompt optimizer beat a hand-written prompt, and how many samples does an A/B test need? | [Results](results/prompting-ab-test-productivity-2026-11-25.md) |
 | `serving-gateway-routing-disaggregation.ipynb` | How do batching, routing, failover, disaggregated prefill and decode, cold starts and autoscaling change a vLLM service? | [Results](results/serving-gateway-routing-disaggregation-2026-11-25.md) |
+| `alignment-sft-dpo-kto-grpo.ipynb` | What data does each alignment method need, what does it change in a 0.5B model, and how does a reward model get hacked? | [Results](results/alignment-sft-dpo-kto-grpo-2026-11-25.md) |
 
 ## How to run
 
