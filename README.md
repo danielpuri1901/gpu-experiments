@@ -114,7 +114,7 @@ The results file of each other experiment gives its own setup.
 
 ## Limits
 
-Each number comes from one run with one seed.
+Most numbers come from one run with one seed. The results file of each experiment states its own sample sizes and repeats.
 The samples are small: 16 to 256 requests per point and 100 GSM8K questions in the serving benchmarks, 101 synthetic questions in RAG, and 300 test items in QLoRA.
 The two serving benchmarks use random prompts, so prefix caching does nothing there.
 The load generator runs on the same machine, so there is no network latency.
