@@ -39,6 +39,9 @@ Each experiment follows one method: predict the result with simple math, measure
 - SFT on 1,500 code-made items took a 0.5B base model from 0.01 to 1.00 on its own instruction rules. DPO on pairs where the right reply is always the shorter one then lowered it to 0.90, and a reward model trained on the same pairs scored 0.00 on right-but-long against wrong-but-short. With balanced pairs it scored 0.83.
 - GRPO took arithmetic from 0.00 to 1.00 in 15 minutes, partly by teaching the base model to write the answer line and to stop. A student distilled from a 1.5B teacher stayed at the teacher's level (0.56 to 0.61 against 0.55) and lost all of its GSM8K ability.
 - An untrained end token made a whole set of fine-tunes look broken. LoRA does not train embeddings, so a base model whose end token was never trained cannot learn to stop on it.
+- On a table of 100,000 rows a random forest scored 90.8% and a neural network 86.1%. On CIFAR-10 the CNN scored 73.6% and hand-made HOG features with an SVM 49.8%. CLIP with no labels scored 89.3%, above every CNN trained with up to 1,000 labels per class.
+- The CNN fell from 73.6% to 25.2% under noise and to 3.6% under a small adversarial step, and it stayed confident (calibration error 0.68). A planted shortcut dropped a tabular score from 95.2% to 59.5% when it was removed.
+- The T4 beat all CPU threads in matrix multiply from n = 128, and from n = 512 when the copy to the GPU counts. A batch of 1 gave 1.7 times the CPU throughput and a batch of 4,096 gave 50 times.
 
 ## Charts
 
@@ -81,6 +84,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `prompting-ab-test-productivity.ipynb` | Does an automatic prompt optimizer beat a hand-written prompt, and how many samples does an A/B test need? | [Results](results/prompting-ab-test-productivity-2026-11-25.md) |
 | `serving-gateway-routing-disaggregation.ipynb` | How do batching, routing, failover, disaggregated prefill and decode, cold starts and autoscaling change a vLLM service? | [Results](results/serving-gateway-routing-disaggregation-2026-11-25.md) |
 | `alignment-sft-dpo-kto-grpo.ipynb` | What data does each alignment method need, what does it change in a 0.5B model, and how does a reward model get hacked? | [Results](results/alignment-sft-dpo-kto-grpo-2026-11-25.md) |
+| `models-classical-vision-parallel.ipynb` | When does a neural network beat a classical model, what do vision tasks return, and where does the GPU speed-up stop? | [Results](results/models-classical-vision-parallel-2026-11-25.md) |
 
 ## How to run
 
