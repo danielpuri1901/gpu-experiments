@@ -51,7 +51,7 @@ Images (CIFAR-10, baseline 9.8%):
 | Two GPUs, strong scaling (global batch 256) | 2.37x, 119% efficiency |
 | Two GPUs, weak scaling (256 per GPU) | 1.93x, 96% efficiency |
 
-Strong scaling is above 100% because a batch of 128 per GPU runs more efficiently on this model than 256. An all-reduce takes 11 ms, and it overlaps with the backward pass.
+Strong scaling is above 100%, probably because a batch of 128 per GPU runs more efficiently on this model than 256 (not tested alone). An all-reduce takes 11 ms, and it overlaps with the backward pass.
 
 ## Robustness and shortcuts
 
