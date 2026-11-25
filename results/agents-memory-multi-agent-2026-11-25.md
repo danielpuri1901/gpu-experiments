@@ -5,7 +5,7 @@ The notebook is `agents-memory-multi-agent.ipynb`. Its parts ran in three places
 | Part | Where | Commit |
 |---|---|---|
 | A (rules, call, agent), B (state), C (memory) | Kaggle batch run, Version 2 | `b9b7f86` |
-| F (NeMo Agent Toolkit) | Kaggle batch run, Version 3 | `8f2e2a9` |
+| F (NeMo Agent Toolkit) | Kaggle batch run, Version 4 | `9f10e92` |
 | A0 (model choice), D (multi-agent), E (improvement loop) | Laptop, same notebook cells | `93bf985` |
 
 On the laptop, 1,743 of 1,744 calls returned an answer and none was throttled.
@@ -78,7 +78,8 @@ Always the most common answer: 30%.
 
 ## F. NVIDIA tools
 
-The NeMo Agent Toolkit (`nvidia-nat` 1.9.0) installed and ran a ReAct workflow from a YAML file, and answered `2026` with a tool call. Its evaluation ran. Its profiler failed on Kaggle's matplotlib setting (`MPLBACKEND`), not on the workflow.
+The NeMo Agent Toolkit (`nvidia-nat` 1.9.0) installed and ran a ReAct workflow from a YAML file, and answered `2026` with a tool call. Its evaluation scored 4 of 4 with exact match, and its profiler wrote its traces, a Gantt chart and an optimization report (2,913 events).
+In the first run the profiler failed, because Kaggle sets an inline matplotlib backend.
 NeMo, the Agent Toolkit and NemoClaw are explained from the saved NVIDIA sources in the notebook.
 
 ## What the numbers show
