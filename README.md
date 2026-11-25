@@ -26,6 +26,7 @@ Each experiment follows one method: predict the result with simple math, measure
 - On hosted Nemotron models, reasoning took arithmetic from 0.1 to 1.0 on a 30B MoE model and gave nothing on extraction and routing, at 9 to 105 times the tokens. A router kept the accuracy of the largest model with 94% less compute proxy (15 tasks).
 - With the same model and GPU, vLLM gave 858 tokens/s at 16 requests against 31 for a simple one-request server. The client moved to a hosted NIM with no code change.
 - Two hosted vision models could not tell possible motion from impossible motion better than a guess (24 clips). The same clips, question and seed at temperature 0 moved three of four scores by 7 to 18 points between two runs, and the critic picked from those scores went from useful to useless.
+- Cosmos-Reason2-2B was not measurably better than its base model Qwen3-VL-2B at spotting impossible motion (120 clips, exact McNemar p between 0.47 and 1.0 on clips both answered). Post-training changed the behavior: with thinking, Cosmos called 34 of 77 clips impossible (19 right, 15 wrong) and the base called 0 of 98. Cosmos changed its verdict on 57% of the clips when only the wording changed.
 
 ## Charts
 
@@ -61,7 +62,7 @@ Run `python scripts/make_charts.py` to rebuild the charts from `results/sweeps-2
 | `nim-model-selection.ipynb` | Which hosted Nemotron model should serve which workload, and when is reasoning worth its tokens? | [Results](results/nim-model-selection-2026-11-24.md) |
 | `nim-three-backends.ipynb` | Can one client move between self-hosted and cloud, and how does private data stay off the cloud? | [Results](results/nim-three-backends-2026-11-24.md) |
 | `cosmos-physical-check.ipynb` | Can hosted vision models tell possible motion from impossible motion? | [Results](results/cosmos-physical-check-2026-11-24.md) |
-| `cosmos-reason2-vs-base-t4.ipynb` | Does physical-AI post-training make Cosmos-Reason2-2B better than its own base model at spotting impossible motion? | Running |
+| `cosmos-reason2-vs-base-t4.ipynb` | Does physical-AI post-training make Cosmos-Reason2-2B better than its own base model at spotting impossible motion? | [Results](results/cosmos-reason2-vs-base-t4-2026-11-24.md) |
 
 ## How to run
 
